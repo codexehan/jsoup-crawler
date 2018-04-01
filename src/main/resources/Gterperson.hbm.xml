@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 28 Sep, 2017 4:41:20 PM by Hibernate Tools 5.1.0.Alpha1 -->
+<hibernate-mapping>
+    <class name="com.bing.model.Gterperson" table="gterperson" catalog="review" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="ielts" type="string">
+            <column name="IELTS" length="100" />
+        </property>
+        <property name="toefl" type="string">
+            <column name="TOEFL" length="100" />
+        </property>
+        <property name="gre" type="string">
+            <column name="GRE" length="100" />
+        </property>
+        <property name="gmat" type="string">
+            <column name="GMAT" length="100" />
+        </property>
+        <property name="other" type="string">
+            <column name="OTHER" length="100" />
+        </property>
+        <property name="cnUniversity" type="string">
+            <column name="cnUniversity" length="100" />
+        </property>
+        <property name="cnMajor" type="string">
+            <column name="cnMajor" length="100" />
+        </property>
+        <property name="cnGpa" type="string">
+            <column name="cnGPA" length="100" />
+        </property>
+        <property name="cnNote" type="string">
+            <column name="cnNote" length="500" />
+        </property>
+        <set name="gteroffers" table="gteroffer" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="personId" />
+            </key>
+            <one-to-many class="com.bing.model.Gteroffer" />
+        </set>
+    </class>
+</hibernate-mapping>
