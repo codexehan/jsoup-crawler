@@ -13,14 +13,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.bing.model.GterManager;
+import com.bing.dao.GterManager;
 import com.bing.model.Gteroffer;
 import com.bing.model.Gterperson;
 
-public class Crawler {
-	private String breakpoint="http://bbs.gter.net/forum.php?mod=viewthread&tid=2110544&extra=page%3D1%26filter%3Dauthor%26orderby%3Ddateline%26typeid%3D995%26typeid%3D995%26orderby%3Ddateline";
+public class CrawlerDB {
+	private String breakpoint="http://bbs.gter.net/forum.php?mod=viewthread&tid=2110544&extra=page%3D1%26filter%3Dauthor%26orderby%3Ddateline%26typeid%3D995%26typeid%3D995%26orderby%3Ddateline";//the first page
 	private String tmpBreakpoint = null;
-	public Crawler(){
+	public CrawlerDB(){
 
 	}
 	/*public boolean hasUpdate(String pageContent){

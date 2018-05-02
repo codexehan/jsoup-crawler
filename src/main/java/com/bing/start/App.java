@@ -1,4 +1,4 @@
-package com.bing.crawler;
+package com.bing.start;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
@@ -10,19 +10,17 @@ import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerUtils;
-/**
- * Hello world!
- *
- */
+
+import com.bing.crawler.CrawlerNoDB;
 public class App implements Job
 {
-	private Crawler crawler;
+	private CrawlerNoDB crawlerNoDB;
 	public App(){
-		this.crawler = new Crawler();
+		this.crawlerNoDB = new CrawlerNoDB();
 	}
     public static void main( String[] args )
     {
-    	new App().crawler.getGterOfferPages();
+    	new App().crawlerNoDB.start();
     	/*try {
             // 创建一个Scheduler
             SchedulerFactory schedFact = 
@@ -52,7 +50,7 @@ public class App implements Job
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		// TODO Auto-generated method stub
 		
-		crawler.getGterOfferPages();
+		crawlerNoDB.start();
  
 	}
 }

@@ -112,6 +112,11 @@ public class Gteroffer implements java.io.Serializable {
 	public void setLink(String link) {
 		this.link = link;
 	}
+	/**
+	 * update basic information of offer
+	 * @param name "申请学校:" "学位:" "专业:" "申请结果:" "入学年份:" "入学学期:" "通知时间"
+	 * @param val
+	 */
 	public void updateOffer(String name, String val){
 		//initialize offer
 		if(name.equals("申请学校:")){
@@ -135,5 +140,15 @@ public class Gteroffer implements java.io.Serializable {
 		else if(name.equals("通知时间:")){
 			this.informDate=val;
 		}
+	}
+	public String toString() {
+		return "申请院校: "+this.university+"\r\n"
+				+"学位: "+this.degree+"\r\n"
+				+"专业: "+this.major+"\r\n"
+				+"申请结果: "+this.result+"\r\n"
+				+"入学年份: "+this.enterDate+"\r\n"
+				+"入学学期: "+this.enterSemester+"\r\n"
+				+"通知时间: "+this.informDate+"\r\n"
+				+"offer 链接: "+this.link+"\r\n";
 	}
 }

@@ -21,6 +21,7 @@ public class Gterperson implements java.io.Serializable {
 	private String cnNote;
 	private Set gteroffers = new HashSet(0);
 
+
 	public Gterperson() {
 	}
 
@@ -125,6 +126,11 @@ public class Gterperson implements java.io.Serializable {
 	public void setGteroffers(Set gteroffers) {
 		this.gteroffers = gteroffers;
 	}
+	/**
+	 * update basic details of person
+	 * @param name "本科学校档次:" "本科专业:" "本科成绩和算法。排名:" "其他说明:" "IELTS:" "TOFEL:" "GRE:" "GMAT:" "Other:"
+	 * @param val
+	 */
 	public void updatePersonDetails(String name, String val){
 		if(name.equals("本科学校档次:")){
 			this.cnUniversity=val;
@@ -154,5 +160,16 @@ public class Gterperson implements java.io.Serializable {
 		else {
 			this.other=val;
 		}
+	}
+	public String toString() {
+		return "本科院校: "+this.cnUniversity+"\r\n"
+				+"本科专业: "+this.cnMajor+"\r\n"
+				+"本科成绩、排名: "+this.cnGpa+"\r\n"
+				+"雅思: "+this.ielts+"\r\n"
+				+"托福: "+this.toefl+"\r\n"
+				+"GRE: "+this.gre+"\r\n"
+				+"GMAT: "+this.gmat+"\r\n"
+				+"其他说明: "+this.cnNote+"\r\n"
+				+"给学弟学妹: "+this.other+"\r\n";
 	}
 }

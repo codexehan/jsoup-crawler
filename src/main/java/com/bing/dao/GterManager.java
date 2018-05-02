@@ -1,10 +1,13 @@
-package com.bing.model;
+package com.bing.dao;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+
+import com.bing.model.Gteroffer;
+import com.bing.model.Gterperson;
 
 /**
  * This is a singleton
