@@ -21,11 +21,13 @@ import com.bing.model.Gterperson;
 public class CrawlerNoDB {
 	private final static int Time_Out = 60*1000;// 1 min
 	private TreeMap<Integer, String> universities = new TreeMap<Integer, String>();
-	private HashMap<String, Integer> countries = new HashMap<String, Integer>();
-	private String universitySo;
+	private HashMap<String, Integer> countries = new HashMap<String, Integer>();//构造函数中手动初始化, 院校库包含的国家和地区
+	private HashMap<String, String> countryLink = new HashMap<String, String>();//构造函数中手动初始化
+	private String universitySo;//搜索的城市
+	private String countrySo;//搜索的国家地区
 	private String breakpoint="http://bbs.gter.net/forum.php?mod=viewthread&tid=2110544&extra=page%3D1%26filter%3Dauthor%26orderby%3Ddateline%26typeid%3D995%26typeid%3D995%26orderby%3Ddateline";
 	private String tmpBreakpoint = null;
-	
+	private String[] countriesArray = new String[] {"美国","加拿大","香港","英国","新加坡","澳大利亚","欧洲诸国","澳门","台湾","日本","韩国","新西兰"};
 	public CrawlerNoDB(){
 		//initialize gter country
 		this.countries.put("美国", 1);
@@ -34,21 +36,36 @@ public class CrawlerNoDB {
 		this.countries.put("英国", 720);
 		this.countries.put("新加坡", 952);
 		this.countries.put("澳大利亚", 953);
+		//initialize gter country link
+		this.countryLink.put("美国", "http://bbs.gter.net/forum.php?mod=forumdisplay&fid=49&orderby=dateline&typeid=158&filter=author&orderby=dateline&typeid=158&page=");
+		this.countryLink.put("加拿大", "http://bbs.gter.net/forum.php?mod=forumdisplay&fid=565&orderby=dateline&typeid=991&filter=author&orderby=dateline&typeid=991&page=");
+		this.countryLink.put("英国", "http://bbs.gter.net/forum.php?mod=forumdisplay&fid=486&orderby=dateline&typeid=992&filter=author&orderby=dateline&typeid=992&page=");
+		this.countryLink.put("欧洲诸国", "http://bbs.gter.net/forum.php?mod=forumdisplay&fid=539&orderby=dateline&typeid=993&filter=author&orderby=dateline&typeid=993&page=");
+		this.countryLink.put("香港", "http://bbs.gter.net/forum.php?mod=forumdisplay&fid=811&orderby=dateline&typeid=994&filter=author&orderby=dateline&typeid=994&page=");
+		this.countryLink.put("澳门", "http://bbs.gter.net/forum.php?mod=forumdisplay&fid=811&orderby=dateline&typeid=994&filter=author&orderby=dateline&typeid=994&page=");
+		this.countryLink.put("台湾", "http://bbs.gter.net/forum.php?mod=forumdisplay&fid=811&orderby=dateline&typeid=994&filter=author&orderby=dateline&typeid=994&page=");
+		this.countryLink.put("新加坡", "http://bbs.gter.net/forum.php?mod=forumdisplay&fid=812&orderby=dateline&typeid=995&filter=author&orderby=dateline&typeid=995&page=");
+		this.countryLink.put("日本", "http://bbs.gter.net/forum.php?mod=forumdisplay&fid=484&orderby=dateline&typeid=996&filter=author&orderby=dateline&typeid=996&page=");
+		this.countryLink.put("韩国", "http://bbs.gter.net/forum.php?mod=forumdisplay&fid=484&orderby=dateline&typeid=996&filter=author&orderby=dateline&typeid=996&page=");
+		this.countryLink.put("澳大利亚", "http://bbs.gter.net/forum.php?mod=forumdisplay&fid=128&orderby=dateline&typeid=1464&filter=author&orderby=dateline&typeid=1464&page=");
+		this.countryLink.put("新西兰", "http://bbs.gter.net/forum.php?mod=forumdisplay&fid=128&orderby=dateline&typeid=1464&filter=author&orderby=dateline&typeid=1464&page=");
 	}
 	public void start() {
-		getGterUniversityPages(1);
-		/*preGetGterOfferPages();
-		getGterOfferPages();*/
+		preGetGterUniversityPages();//确定国家或地区
+		getGterUniversityPages();//获取大学李彪
+		preGetGterOfferPages();//universitySo
+		getGterOfferPages();
 	}
 	public boolean isBreakPoint(String link){
 		return link.equals(breakpoint);
 	}
+	///////////////////////////get offers///////////////////////////
 	/**
 	 * Entrance of Gter offer pages
 	 */
 	public void getGterOfferPages(){
 		//this is the link sorted by publish date
-		String link="http://bbs.gter.net/forum.php?mod=forumdisplay&fid=812&orderby=dateline&typeid=995&orderby=dateline&typeid=995&filter=author&page=";
+		String link= this.countryLink.get(this.countrySo);
 		int pageAmount = 44/*Integer.MAX_VALUE*/;
 		int i=1;
 		for(;i<=pageAmount&&getGterOfferLinks(link+i);i++);
@@ -58,17 +75,25 @@ public class CrawlerNoDB {
 	}
 	public void preGetGterOfferPages() {
 		int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
-		for(Entry<Integer, String> entry: this.universities.entrySet()) {
-			System.out.println(entry.getKey()+". "+ entry.getValue());
-			min = Math.min(min, entry.getKey());
-			max = Math.max(max, entry.getKey());
+		if(this.universities.isEmpty()) {//非院校库国家和地区，无法获取专业列表
+			Scanner reader = new Scanner(System.in);
+			System.out.println("Input the official English name of university: ");
+			this.universitySo = reader.nextLine();
+			reader.close();
 		}
-		Scanner reader = new Scanner(System.in);  // Reading from System.in
-		System.out.println("Choose the university ("+min+"-"+max+"): ");
-		int n = reader.nextInt(); // Scans the next token of the input as an int.
-		this.universitySo = this.universities.get(n);
-		//once finished
-		reader.close();
+		else {
+			for(Entry<Integer, String> entry: this.universities.entrySet()) {
+				System.out.println(entry.getKey()+". "+ entry.getValue());
+				min = Math.min(min, entry.getKey());
+				max = Math.max(max, entry.getKey());
+			}
+			Scanner reader = new Scanner(System.in);  // Reading from System.in
+			System.out.println("Choose the university ("+min+"-"+max+"): ");
+			int n = Integer.parseInt(reader.nextLine()); // Scans the next token of the input as an int.
+			this.universitySo = this.universities.get(n);
+			//once finished
+			reader.close();
+		}
 	}
 	/**
 	 * get all offer links in the page
@@ -189,39 +214,33 @@ public class CrawlerNoDB {
 	public void preGetGterUniversityPages() {
 		//TODO:
 		int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
-		for(Entry<Integer, String> entry: this.universities.entrySet()) {
-			System.out.println(entry.getKey()+". "+ entry.getValue());
-			min = Math.min(min, entry.getKey());
-			max = Math.max(max, entry.getKey());
+		for(int i=0; i<this.countriesArray.length;i++) {
+			System.out.println(i+1+" "+this.countriesArray[i]);
 		}
 		Scanner reader = new Scanner(System.in);  // Reading from System.in
-		System.out.println("Choose the university ("+min+"-"+max+"): ");
-		int n = reader.nextInt(); // Scans the next token of the input as an int.
-		this.universitySo = this.universities.get(n);
+		System.out.println("Choose the country ("+1+"-"+this.countriesArray.length+"): ");
+		int n = Integer.parseInt(reader.nextLine()); // Scans the next token of the input as an int.
+		this.countrySo = this.countriesArray[n-1];
 		//once finished
-		reader.close();
+//		reader.close();
 	}
 
 	/**
 	 * get all universities in a country
 	 * @param countryId
 	 */
-	public void getGterUniversityPages(int countryId) {
+	public void getGterUniversityPages() {
 		//TODO: get countryId
-		//this is the link sorted by publish date
-		String link="http://school.gter.net/search/countries.html?countrieid=1&page=";
-		int pageAmount = getUniversityPageAmount(link+1);/*Integer.MAX_VALUE*/;
-		System.out.println(pageAmount);
-		int i=1, index=1;
-		for(;i<=pageAmount;i++) {
-			index = getGterUniversityNames(link+i, index);
+		if(this.countries.containsKey(this.countrySo)) {
+			int countryId = this.countries.get(this.countrySo);
+			//this is the link sorted by publish date
+			String link="http://school.gter.net/search/countries.html?countrieid="+countryId+"&page=";
+			int pageAmount = getUniversityPageAmount(link+1);/*Integer.MAX_VALUE*/;
+			int i=1, index=1;
+			for(;i<=pageAmount;i++) {
+				index = getGterUniversityNames(link+i, index);
+			}
 		}
-		for(Entry<Integer, String> entry : this.universities.entrySet()) {
-			System.out.println(entry.getKey()+" "+entry.getValue());
-		}
-		//update breakpoint;
-		breakpoint = tmpBreakpoint;
-		System.out.println("done...");
 	}
 	/**
 	 * get all university links in the page
